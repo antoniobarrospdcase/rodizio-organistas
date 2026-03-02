@@ -1,0 +1,18 @@
+[Unit]
+Description=Rodizio Organistas ASP.NET Core
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/rodizio-organistas
+ExecStart=/usr/bin/dotnet /opt/rodizio-organistas/RodizioOrganistas.Web.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=rodizio-organistas
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5000
+Environment=ConnectionStrings__DefaultConnection=server=127.0.0.1;port=3306;database=rodizio_organistas;user=root;password=root
+
+[Install]
+WantedBy=multi-user.target

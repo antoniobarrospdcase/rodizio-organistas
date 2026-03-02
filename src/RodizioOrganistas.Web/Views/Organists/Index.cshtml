@@ -1,0 +1,9 @@
+@model IReadOnlyList<RodizioOrganistas.Domain.Entities.Organist>
+<h3>Organistas - @(ViewBag.Church?.Name)</h3>
+<a class="btn btn-success mb-2" asp-action="Create" asp-route-churchId="@(ViewBag.Church?.Id)">Nova Organista</a>
+<table id="tblOrg" class="table table-bordered"><thead><tr><th>Nome</th><th>Abreviado</th><th>Telefone</th><th>Ações</th></tr></thead>
+<tbody>@foreach (var o in Model) {<tr><td>@o.Name</td><td>@o.ShortName</td><td>@o.Phone</td><td>
+<a asp-action="Edit" asp-route-id="@o.Id" class="btn btn-sm btn-warning">Editar</a>
+<form method="post" asp-action="Delete" asp-route-id="@o.Id" asp-route-churchId="@o.ChurchId" style="display:inline"><button class="btn btn-sm btn-danger">Excluir</button></form>
+</td></tr>}</tbody></table>
+@section Scripts {<script>$('#tblOrg').DataTable();</script>}
