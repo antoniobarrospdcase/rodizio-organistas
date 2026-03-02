@@ -22,6 +22,8 @@ public static class DependencyInjection
         services.AddScoped<IChurchRepository, ChurchRepository>();
         services.AddScoped<IOrganistRepository, OrganistRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IScheduleRepository, ScheduleRepository>();
         services.AddScoped<IScheduleService, ScheduleService>();
 
         return services;

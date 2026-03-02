@@ -7,8 +7,8 @@ using RodizioOrganistas.Web.Models;
 
 namespace RodizioOrganistas.Web.Controllers;
 
-[Authorize]
-public class ChurchesController(IChurchRepository churchRepository, IUnitOfWork unitOfWork) : Controller
+[Authorize(Roles = nameof(UserRole.MasterAdmin))]
+public class ChurchesController(IChurchRepository churchRepository, IUserRepository userRepository, IUnitOfWork unitOfWork) : Controller
 {
     public async Task<IActionResult> Index(string? term, int page = 1)
     {
@@ -27,9 +27,30 @@ public class ChurchesController(IChurchRepository churchRepository, IUnitOfWork 
     public async Task<IActionResult> Create(ChurchViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
+        if (string.IsNullOrWhiteSpace(model.AdminUsername) || string.IsNullOrWhiteSpace(model.AdminPassword))
+        {
+            ModelState.AddModelError(string.Empty, "Usuário e senha do administrador da igreja são obrigatórios.");
+            return View(model);
+        }
+        if (await userRepository.GetByUsernameAsync(model.AdminUsername) is not null)
+        {
+            ModelState.AddModelError(nameof(model.AdminUsername), "Usuário já existe.");
+            return View(model);
+        }
+
         var church = Map(model);
         await churchRepository.AddAsync(church);
         await unitOfWork.SaveChangesAsync();
+
+        await userRepository.AddAsync(new AppUser
+        {
+            Username = model.AdminUsername,
+            Password = model.AdminPassword,
+            Role = UserRole.ChurchAdmin,
+            ChurchId = church.Id
+        });
+        await unitOfWork.SaveChangesAsync();
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -83,6 +104,8 @@ public class ChurchesController(IChurchRepository churchRepository, IUnitOfWork 
         City = c.City,
         OfficialOrganistsPerService = c.OfficialOrganistsPerService,
         YouthMeetingDays = c.ServiceDays.Where(x => x.ServiceType == ServiceType.YouthMeeting).Select(x => x.DayOfWeek).ToList(),
-        OfficialServiceDays = c.ServiceDays.Where(x => x.ServiceType == ServiceType.OfficialService).Select(x => x.DayOfWeek).ToList()
+        OfficialServiceDays = c.ServiceDays.Where(x => x.ServiceType == ServiceType.OfficialService).Select(x => x.DayOfWeek).ToList(),
+        AdminUsername = "",
+        AdminPassword = ""
     };
 }

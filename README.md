@@ -10,9 +10,14 @@
 - Autenticação via Cookie
 
 ## Funcionalidades
-- Login (`admin` / `Admin@123`)
-- CRUD de Igrejas
-- CRUD de Organistas por igreja
+- Login por perfis:
+  - Master Admin: `master` / `Master@123`
+  - Admin de Igreja: criado no cadastro da igreja
+  - Organista: criado no cadastro da organista
+- CRUD de Igrejas (somente Master Admin)
+- CRUD de Organistas por igreja (Master Admin/Admin de Igreja)
+- Controle de acesso por escopo de igreja
+- Organistas visualizam apenas rodízios salvos da própria igreja
 - Cadastro de dias por tipo de culto
 - Geração e impressão de rodízio por período e tipo (Reunião de Jovens, Cultos Oficiais)
 - Validação client-side e server-side

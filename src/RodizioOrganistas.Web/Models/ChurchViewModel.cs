@@ -11,6 +11,10 @@ public class ChurchViewModel
     public string City { get; set; } = string.Empty;
     [Range(1,2)]
     public int OfficialOrganistsPerService { get; set; } = 1;
+    [StringLength(100)]
+    public string AdminUsername { get; set; } = string.Empty;
+    [StringLength(100)]
+    public string AdminPassword { get; set; } = string.Empty;
     public List<DayOfWeek> YouthMeetingDays { get; set; } = [];
     public List<DayOfWeek> OfficialServiceDays { get; set; } = [];
 }

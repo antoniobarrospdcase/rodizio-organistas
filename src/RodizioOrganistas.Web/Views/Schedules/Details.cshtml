@@ -1,0 +1,5 @@
+@model RodizioOrganistas.Domain.Entities.Schedule
+<h3>Rodízio #@Model.Id</h3>
+<table class="table table-sm"><thead><tr><th>Data</th><th>Organista</th><th>Meia Hora</th></tr></thead><tbody>
+@foreach (var i in Model.Items.OrderBy(x=>x.Date)) {<tr><td>@i.Date</td><td>@i.OrganistName</td><td>@(i.HalfHourOrganistName ?? "-")</td></tr>}
+</tbody></table>

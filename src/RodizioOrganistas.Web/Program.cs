@@ -44,6 +44,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Churches}/{action=Index}/{id?}");
+    pattern: "{controller=Schedules}/{action=Index}/{id?}");
 
 app.Run();

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RodizioOrganistas.Domain.Entities;
@@ -7,41 +8,69 @@ using RodizioOrganistas.Web.Models;
 
 namespace RodizioOrganistas.Web.Controllers;
 
-[Authorize]
-public class OrganistsController(IOrganistRepository organistRepository, IChurchRepository churchRepository, IUnitOfWork unitOfWork) : Controller
+[Authorize(Roles = nameof(UserRole.MasterAdmin)+","+nameof(UserRole.ChurchAdmin))]
+public class OrganistsController(IOrganistRepository organistRepository, IChurchRepository churchRepository, IUserRepository userRepository, IUnitOfWork unitOfWork) : Controller
 {
     public async Task<IActionResult> Index(int churchId, string? term, int page = 1)
     {
+        if (!CanAccessChurch(churchId)) return Forbid();
         const int pageSize = 10;
         ViewBag.Church = await churchRepository.GetByIdAsync(churchId);
         ViewBag.Total = await organistRepository.CountByChurchAsync(churchId, term);
-        ViewBag.Page = page;
-        ViewBag.PageSize = pageSize;
         var items = await organistRepository.GetByChurchPagedAsync(churchId, term, page, pageSize);
         return View(items);
     }
 
-    public async Task<IActionResult> Create(int churchId) => View(await CreateBaseVm(churchId));
+    public async Task<IActionResult> Create(int churchId)
+    {
+        if (!CanAccessChurch(churchId)) return Forbid();
+        return View(await CreateBaseVm(churchId));
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create(OrganistViewModel model)
     {
+        if (!CanAccessChurch(model.ChurchId)) return Forbid();
         if (!ModelState.IsValid) return View(await MergeDays(model));
-        await organistRepository.AddAsync(Map(model));
+        if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
+        {
+            ModelState.AddModelError(string.Empty, "Usuário e senha da organista são obrigatórios.");
+            return View(await MergeDays(model));
+        }
+        if (await userRepository.GetByUsernameAsync(model.Username) is not null)
+        {
+            ModelState.AddModelError(nameof(model.Username), "Usuário já existe.");
+            return View(await MergeDays(model));
+        }
+
+        var organist = Map(model);
+        await organistRepository.AddAsync(organist);
         await unitOfWork.SaveChangesAsync();
+
+        await userRepository.AddAsync(new AppUser
+        {
+            Username = model.Username,
+            Password = model.Password,
+            Role = UserRole.Organist,
+            ChurchId = model.ChurchId,
+            OrganistId = organist.Id
+        });
+        await unitOfWork.SaveChangesAsync();
+
         return RedirectToAction(nameof(Index), new { churchId = model.ChurchId });
     }
 
     public async Task<IActionResult> Edit(int id)
     {
         var organist = await organistRepository.GetByIdAsync(id);
-        if (organist is null) return NotFound();
+        if (organist is null || !CanAccessChurch(organist.ChurchId)) return Forbid();
         return View(await ToVm(organist));
     }
 
     [HttpPost]
     public async Task<IActionResult> Edit(OrganistViewModel model)
     {
+        if (!CanAccessChurch(model.ChurchId)) return Forbid();
         if (!ModelState.IsValid) return View(await MergeDays(model));
         var organist = await organistRepository.GetByIdAsync(model.Id);
         if (organist is null) return NotFound();
@@ -59,14 +88,22 @@ public class OrganistsController(IOrganistRepository organistRepository, IChurch
         return RedirectToAction(nameof(Index), new { churchId = model.ChurchId });
     }
 
+
     [HttpPost]
     public async Task<IActionResult> Delete(int id, int churchId)
     {
+        if (!CanAccessChurch(churchId)) return Forbid();
         var organist = await organistRepository.GetByIdAsync(id);
         if (organist is null) return NotFound();
         organistRepository.Remove(organist);
         await unitOfWork.SaveChangesAsync();
         return RedirectToAction(nameof(Index), new { churchId });
+    }
+    private bool CanAccessChurch(int churchId)
+    {
+        if (User.IsInRole(nameof(UserRole.MasterAdmin))) return true;
+        var claim = User.FindFirstValue("ChurchId");
+        return int.TryParse(claim, out var c) && c == churchId;
     }
 
     private async Task<OrganistViewModel> CreateBaseVm(int churchId)

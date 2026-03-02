@@ -14,5 +14,7 @@ public class ScheduleFilterViewModel
     public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
     [Required]
     public ServiceType ServiceType { get; set; }
+    public int? SavedScheduleId { get; set; }
     public IReadOnlyList<ScheduleAssignment> Results { get; set; } = [];
+    public IReadOnlyList<Schedule> SavedSchedules { get; set; } = [];
 }
