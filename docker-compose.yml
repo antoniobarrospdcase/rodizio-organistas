@@ -16,6 +16,8 @@ services:
       - mysql
     environment:
       ConnectionStrings__DefaultConnection: server=mysql;port=3306;database=rodizio_organistas;user=root;password=root
+      Authentication__Admin__Username: ${AUTH_ADMIN_USERNAME}
+      Authentication__Admin__PasswordHash: ${AUTH_ADMIN_PASSWORD_HASH}
     ports:
       - "5000:5000"
 
