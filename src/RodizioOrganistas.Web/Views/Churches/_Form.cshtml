@@ -1,0 +1,11 @@
+@model ChurchViewModel
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /></div>
+<div class="form-group"><label asp-for="City"></label><input asp-for="City" class="form-control" /></div>
+<div class="form-group"><label asp-for="OfficialOrganistsPerService"></label><select asp-for="OfficialOrganistsPerService" class="form-control"><option value="1">1</option><option value="2">2</option></select></div>
+<div class="form-group"><label asp-for="AdminUsername"></label><input asp-for="AdminUsername" class="form-control" /></div>
+<div class="form-group"><label asp-for="AdminPassword"></label><input asp-for="AdminPassword" class="form-control" /></div>
+<div class="form-group"><label>Dias Reunião de Jovens</label>@foreach (DayOfWeek d in Enum.GetValues(typeof(DayOfWeek))) {<div><input type="checkbox" name="YouthMeetingDays" value="@d" checked="@(Model.YouthMeetingDays.Contains(d))"/> @d</div>}</div>
+<div class="form-group"><label>Dias Cultos Oficiais</label>@foreach (DayOfWeek d in Enum.GetValues(typeof(DayOfWeek))) {<div><input type="checkbox" name="OfficialServiceDays" value="@d" checked="@(Model.OfficialServiceDays.Contains(d))"/> @d</div>}</div>
+<button class="btn btn-primary">Salvar</button>
+<partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
