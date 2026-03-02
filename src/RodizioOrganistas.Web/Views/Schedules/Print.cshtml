@@ -1,0 +1,6 @@
+@model ScheduleFilterViewModel
+@{ Layout = null; }
+<html><body onload="window.print()"><h3>Rodízio</h3>
+<table border="1" cellpadding="4" cellspacing="0"><tr><th>Data</th><th>Dia</th><th>Organista</th><th>Meia Hora</th></tr>
+@foreach (var r in Model.Results){<tr><td>@r.Date</td><td>@r.DayOfWeek</td><td>@r.OrganistName</td><td>@(r.HalfHourOrganistName ?? "-")</td></tr>}
+</table></body></html>
