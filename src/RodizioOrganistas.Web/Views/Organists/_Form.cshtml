@@ -1,0 +1,13 @@
+@model OrganistViewModel
+<input type="hidden" asp-for="ChurchId" />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /></div>
+<div class="form-group"><label asp-for="ShortName"></label><input asp-for="ShortName" class="form-control" /></div>
+<div class="form-group"><label asp-for="Phone"></label><input asp-for="Phone" class="form-control" /></div>
+<div><input asp-for="CanPlayYouthMeeting" /> Reunião de Jovens</div>
+<div><input asp-for="CanPlayOfficialServices" /> Cultos Oficiais</div>
+<div><input asp-for="CanPlayHalfHour" /> Meia Hora</div>
+<div class="row"><div class="col-6"><strong>Dias permitidos - Jovens</strong>@foreach (var d in Model.AllowedYouthDays){<div><input type="checkbox" name="YouthDays" value="@d" checked="@(Model.YouthDays.Contains(d))"/> @d</div>}</div>
+<div class="col-6"><strong>Dias permitidos - Oficiais</strong>@foreach (var d in Model.AllowedOfficialDays){<div><input type="checkbox" name="OfficialDays" value="@d" checked="@(Model.OfficialDays.Contains(d))"/> @d</div>}</div></div>
+<button class="btn btn-primary mt-2">Salvar</button>
+<partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />

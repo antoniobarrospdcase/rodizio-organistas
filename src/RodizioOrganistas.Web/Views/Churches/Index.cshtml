@@ -1,0 +1,15 @@
+@model IReadOnlyList<RodizioOrganistas.Domain.Entities.Church>
+<h3>Igrejas</h3>
+<a class="btn btn-success mb-2" asp-action="Create">Nova Igreja</a>
+<table id="tbl" class="table table-bordered table-striped">
+<thead><tr><th>Nome</th><th>Cidade</th><th>Org/Culto Oficial</th><th>Ações</th></tr></thead>
+<tbody>
+@foreach (var c in Model) {
+<tr><td>@c.Name</td><td>@c.City</td><td>@c.OfficialOrganistsPerService</td><td>
+<a asp-controller="Organists" asp-action="Index" asp-route-churchId="@c.Id" class="btn btn-sm btn-info">Organistas</a>
+<a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-warning">Editar</a>
+<form method="post" asp-action="Delete" asp-route-id="@c.Id" style="display:inline"><button class="btn btn-sm btn-danger" onclick="return confirm('Excluir?')">Excluir</button></form>
+</td></tr>
+}
+</tbody></table>
+@section Scripts {<script>$('#tbl').DataTable();</script>}

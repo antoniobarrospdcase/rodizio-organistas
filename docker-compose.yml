@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rodizio_organistas
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    depends_on:
+      - mysql
+    environment:
+      ConnectionStrings__DefaultConnection: server=mysql;port=3306;database=rodizio_organistas;user=root;password=root
+    ports:
+      - "5000:5000"
+
+volumes:
+  mysql_data:
