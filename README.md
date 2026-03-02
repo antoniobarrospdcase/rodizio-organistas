@@ -10,13 +10,21 @@
 - Autenticação via Cookie
 
 ## Funcionalidades
-- Login (`admin` / `Admin@123`)
+- Login de administrador via cookie (credenciais por configuração segura)
 - CRUD de Igrejas
 - CRUD de Organistas por igreja
 - Cadastro de dias por tipo de culto
 - Geração e impressão de rodízio por período e tipo (Reunião de Jovens, Cultos Oficiais)
 - Validação client-side e server-side
 - Paginação/filtro via DataTables e repositórios paginados
+
+## Configuração de autenticação
+As credenciais do administrador **não ficam no código-fonte**. Configure em segredo de ambiente:
+
+- `Authentication__Admin__Username`
+- `Authentication__Admin__PasswordHash`
+
+O valor de `PasswordHash` deve ser gerado com `PasswordHasher` do ASP.NET Core e armazenado já em formato hash.
 
 ## Banco de dados (script inicial + EF)
 - Script SQL inicial: `db/init/001_initial.sql`
@@ -26,6 +34,8 @@
   - `Database.EnsureCreated()` como fallback quando ainda não houver migrations.
 
 ## Rodar com Docker
+Defina as variáveis de ambiente `AUTH_ADMIN_USERNAME` e `AUTH_ADMIN_PASSWORD_HASH` (por exemplo em um arquivo `.env`) antes de subir a aplicação.
+
 ```bash
 docker compose up --build
 ```

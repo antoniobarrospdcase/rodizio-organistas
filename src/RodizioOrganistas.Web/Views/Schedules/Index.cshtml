@@ -3,6 +3,7 @@
 @using RodizioOrganistas.Domain.Enums
 <h3>Impressão de Rodízio</h3>
 <form method="post">
+@Html.AntiForgeryToken()
 <div class="row">
 <div class="col-md-3"><label>Igreja</label><select asp-for="ChurchId" class="form-control" asp-items="@(new SelectList((IReadOnlyList<Church>)ViewBag.Churches, "Id", "Name"))"></select></div>
 <div class="col-md-2"><label>Início</label><input asp-for="StartDate" type="date" class="form-control" /></div>

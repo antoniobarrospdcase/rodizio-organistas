@@ -7,7 +7,7 @@ using RodizioOrganistas.Web.Models;
 
 namespace RodizioOrganistas.Web.Controllers;
 
-public class AuthController : Controller
+public class AuthController(IUserStore userStore, ILogger<AuthController> logger) : Controller
 {
     [HttpGet]
     public IActionResult Login() => View(new LoginViewModel());
@@ -17,9 +17,18 @@ public class AuthController : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        if (model.Username != UserStore.Username || model.Password != UserStore.Password)
+        try
         {
-            ModelState.AddModelError(string.Empty, "Usuário ou senha inválidos.");
+            if (!userStore.ValidateCredentials(model.Username, model.Password))
+            {
+                ModelState.AddModelError(string.Empty, "Usuário ou senha inválidos.");
+                return View(model);
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogError(ex, "Admin credentials are missing or invalid in configuration.");
+            ModelState.AddModelError(string.Empty, "Configuração de autenticação inválida. Contate o administrador.");
             return View(model);
         }
 

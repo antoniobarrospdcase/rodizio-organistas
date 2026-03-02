@@ -5,6 +5,7 @@ using RodizioOrganistas.Application.Interfaces;
 using RodizioOrganistas.Application.Services;
 using RodizioOrganistas.Domain.Interfaces;
 using RodizioOrganistas.Infrastructure.Data;
+using RodizioOrganistas.Infrastructure.Identity;
 using RodizioOrganistas.Infrastructure.Repositories;
 
 namespace RodizioOrganistas.Infrastructure;
@@ -23,6 +24,8 @@ public static class DependencyInjection
         services.AddScoped<IOrganistRepository, OrganistRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IScheduleService, ScheduleService>();
+        services.Configure<AdminCredentialsOptions>(configuration.GetSection("Authentication:Admin"));
+        services.AddSingleton<IUserStore, UserStore>();
 
         return services;
     }
