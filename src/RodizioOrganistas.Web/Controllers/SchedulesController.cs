@@ -17,8 +17,9 @@ public class SchedulesController(IScheduleService scheduleService, IScheduleRepo
         var model = new ScheduleFilterViewModel();
         model.ChurchId = GetCurrentChurchIdOrDefault();
         await FillViewBagChurches();
-        if (model.ChurchId > 0)
-            model.SavedSchedules = await scheduleRepository.GetByChurchAsync(model.ChurchId);
+        model.SavedSchedules = User.IsInRole(nameof(UserRole.MasterAdmin))
+            ? await scheduleRepository.GetAllAsync()
+            : await scheduleRepository.GetByChurchAsync(model.ChurchId);
         return View(model);
     }
 
@@ -50,7 +51,9 @@ public class SchedulesController(IScheduleService scheduleService, IScheduleRepo
         await scheduleRepository.AddAsync(schedule);
         await unitOfWork.SaveChangesAsync();
         model.SavedScheduleId = schedule.Id;
-        model.SavedSchedules = await scheduleRepository.GetByChurchAsync(model.ChurchId, model.ServiceType);
+        model.SavedSchedules = User.IsInRole(nameof(UserRole.MasterAdmin))
+            ? await scheduleRepository.GetAllAsync(model.ServiceType)
+            : await scheduleRepository.GetByChurchAsync(model.ChurchId, model.ServiceType);
         return View(model);
     }
 

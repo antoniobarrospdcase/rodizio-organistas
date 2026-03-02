@@ -6,4 +6,5 @@ namespace RodizioOrganistas.Domain.Interfaces;
 public interface IScheduleRepository : IRepository<Schedule>
 {
     Task<IReadOnlyList<Schedule>> GetByChurchAsync(int churchId, ServiceType? type = null);
+    Task<IReadOnlyList<Schedule>> GetAllAsync(ServiceType? type = null);
 }

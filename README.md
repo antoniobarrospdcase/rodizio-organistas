@@ -15,10 +15,13 @@
   - Admin de Igreja: criado no cadastro da igreja
   - Organista: criado no cadastro da organista
 - CRUD de Igrejas (somente Master Admin)
-- CRUD de Organistas por igreja (Master Admin/Admin de Igreja)
+- CRUD de Organistas por igreja (Master Admin/Admin de Igreja) com incluir/alterar/excluir para a própria igreja
 - Controle de acesso por escopo de igreja
 - Organistas visualizam apenas rodízios salvos da própria igreja
+- Troca de senha para todos os usuários
 - Cadastro de dias por tipo de culto
+- Master Admin visualiza todos os rodízios já gerados e também pode gerar para qualquer igreja
+- Admin de igreja visualiza/gera rodízios apenas da sua igreja
 - Geração e impressão de rodízio por período e tipo (Reunião de Jovens, Cultos Oficiais)
 - Validação client-side e server-side
 - Paginação/filtro via DataTables e repositórios paginados
